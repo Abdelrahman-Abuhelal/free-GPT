@@ -7,18 +7,18 @@ nltk.download('stopwords')
 from nltk.corpus import stopwords
 
 
-
+# Everthing in one file
 
 stop_words = stopwords.words('english')
 
 
 
-url=input("Enter a link to summarize content inside: ")
 
 def scrap_content(url):
     page=requests.get(url)
     page_content= page.text
     content = BeautifulSoup(page_content, 'html.parser')
+    # only paragraphs
     para= content.find_all('p')
     text_list = [p.text for p in para]
     complete_text = ' '.join(text_list)
@@ -31,10 +31,13 @@ def clean_text(text):
     text = text.lower()
     return text
 
+#not used
 def limit_to_2000_words(text):
     words = text.split()
     return ' '.join(words[:2000])
 
+
+#any text size can fit now
 def split_text(text):
     max_chunk_size = 2000
     chunks = []
@@ -49,20 +52,21 @@ def split_text(text):
         chunks.append(current_chunk.strip())
     return chunks
 
-
+# I dont like links
 def remove_urls(text):
     url_pattern = re.compile(r'https?://\S+|www\.\S+')
     return url_pattern.sub(r'', text)
 
 
-
+#not used but ok
 def remove_stopWords(text):
     splittedText=text.split()
     withoutStopWords=[word for word in splittedText if word not in stop_words]
     return ' '.join(withoutStopWords)
 
-
-    
+#  the API to the local llm
+# the summary is a list of summary response concatenated
+# I didnt use langchain but there is a colab notebook for another solution 
 def get_response(text):
     input_chunks = split_text(text)
     output_chunks = []
@@ -83,7 +87,7 @@ def get_response(text):
         data={
         "messages":messages,
         "temperature": 0.7, 
-        "max_tokens": 400,
+        "max_tokens": 500,
         "stream": False
         }
         response = requests.post(url,headers=headers, data=json.dumps(data))
@@ -97,6 +101,8 @@ def get_response(text):
         
     
     
+url=input("Enter a link to summarize content inside: ")
+   
 page_text = scrap_content(url)
 cleanedText = clean_text(page_text)
 print(f"The cleaned text is : {cleanedText}/n /n /n")
