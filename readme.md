@@ -1,3 +1,5 @@
+An open source LLM summarizes your website articles.
+
 ## Install LMstudio
 
 
